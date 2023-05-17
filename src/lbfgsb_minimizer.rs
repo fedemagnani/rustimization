@@ -2,6 +2,8 @@ use libc::{c_char, c_double, c_int};
 use std::ffi::CStr;
 use lbfgsb::step;
 use string::stringfy;
+extern crate log;
+
 pub struct Lbfgsb<'a> {
     n: c_int,
     m: c_int,
@@ -90,21 +92,21 @@ impl<'a> Lbfgsb<'a> {
             }
             if &tsk[0..5] == "NEW_X" && self.max_iter == 0 &&
                self.dsave[11] <= 1.0e-10 * (1.0e0 + fval.abs()) {
-                println!("THE PROJECTED GRADIENT IS SUFFICIENTLY SMALL");
+                log::error!("THE PROJECTED GRADIENT IS SUFFICIENTLY SMALL");
                 break;
             }
             if self.max_iter > 0 && self.isave[29] >= self.max_iter as i32 {
                 break;
             }
             if &tsk[0..4] == "CONV" {
-                println!("convergence!");
+                log::info!("convergence!");
                 break;
             }
             if &tsk[0..5] == "ERROR" {
-                println!("error in the input parameters");
+                log::error!("error in the input parameters");
             }
             if &tsk[0..8] == "ABNORMAL" {
-                println!("ERROR: ABNORMAL TERMINATION");
+                log::error!("ERROR: ABNORMAL TERMINATION");
                 break;
             }
         }
@@ -116,7 +118,7 @@ impl<'a> Lbfgsb<'a> {
     // this function is used to set lower bounds to a variable
     pub fn set_lower_bound(&mut self, index: usize, value: f64) {
         if self.nbd[index] == 1 || self.nbd[index] == 2 {
-            println!("variable already has Lower Bound");
+            log::error!("variable already has Lower Bound");
         } else {
             let temp = self.nbd[index] - 1;
             self.nbd[index] = if temp < 0 {
@@ -130,7 +132,7 @@ impl<'a> Lbfgsb<'a> {
     // this function is used to set upper bounds to a variable
     pub fn set_upper_bound(&mut self, index: usize, value: f64) {
         if self.nbd[index] == 3 || self.nbd[index] == 2 {
-            println!("variable already has Lower Bound");
+            log::error!("variable already has Lower Bound");
         } else {
             self.nbd[index] = 3 - self.nbd[index];
             self.u[index] = value;

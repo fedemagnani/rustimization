@@ -1,5 +1,6 @@
 extern crate rustimization;
 use rustimization::lbfgsb_minimizer::Lbfgsb;
+extern crate log;
 #[test]
 fn test(){
     let f = |x:&Vec<f64>|{ (x[0]+4.0).powf(2.0)};

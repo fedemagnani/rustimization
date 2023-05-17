@@ -1,5 +1,6 @@
 use cg_minimizer::CG;
 use lbfgsb_minimizer::Lbfgsb;
+extern crate log;
 pub struct Funcmin<'a> {
     x: &'a mut Vec<f64>,
     f: &'a Fn(&Vec<f64>) -> f64,
@@ -48,7 +49,7 @@ impl<'a> Funcmin<'a> {
                 minf.max_iteration(self.max_iter);
                 minf.minimize();
             } else {
-                println!("wrong method provided");
+                log::error!("wrong method provided");
             }
 
         }
